@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.animation as animation
+from matplotlib.animation import PillowWriter
 
 
 # Advection - diffusion with mean flow
@@ -8,21 +9,22 @@ import matplotlib.animation as animation
 
 # Time and space coordinates
 eps = 1e-9
-dt = 300 # time step, s
-t = np.arange(dt, 12 * 3600.0, dt)
+dt = 0.01 # time step, s
+t = np.arange(dt, 5, dt)
 nt = len(t)
 x = np.linspace(- 6, 6, 1000)
 
-K = 1e-5#1e-5 # m2/s, typical value for gas
+K = 1#1e-5#1e-5 # m2/s, typical value for gas
 
 # Mean flow: x, y, z components of velocity
-U= 0 * 1e-4 # m/s
+U= 1#1e-4 # m/s
 
 # Mesh: space-time
 tt, xx = np.meshgrid(t, x)
 
 # Solution  
 C = 1.0 / (2.0 * np.sqrt(K * np.pi * tt)) * np.exp(- (xx - U * tt) ** 2 / (4.0 * K * tt))
+
 
 
 
