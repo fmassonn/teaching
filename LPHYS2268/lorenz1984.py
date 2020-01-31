@@ -98,30 +98,54 @@ fig, ax = plt.subplots(figsize = (6, 5), dpi = 300, \
                        constrained_layout = True)
 ax = plt.axes(projection = '3d')
 ax.view_init(50, -45)
+jd_show = int(nd_show / (time_unit * dt))
 
-[ax.plot3D(t * time_unit, X[jMC, jM, :], np.zeros(len(t)), lw = 0.01, \
-     color = "grey") \
-     for jMC in range(nMC)]
+has_legend = False
+for jMC in range(nMC):
+    if not has_legend:
+        label = "Realization"
+        has_legend = True
+    else:
+        label = None
+      
+    ax.plot3D(t[:jd_show] * time_unit, X[jMC, jM, :jd_show], \
+           np.zeros(len(t[:jd_show])), lw = 0.01, \
+    color = "grey", label = label)
+
 # Plot truth
-ax.plot3D(t * time_unit, X[jtruth, jM, :], np.zeros(len(t)), lw = 1, \
-          color = [0.0, 0.5, 0.0])
+ax.plot3D(t[:jd_show] * time_unit, X[jtruth, jM, :jd_show], \
+          np.zeros(len(t[:jd_show])), lw = 1, \
+          color = [0.0, 0.5, 0.0], label = "Truth")
 
 ax.plot3D((0.0, nd_show), (0.0, 0.0), (0.0, 0.0), "k--")
 # Estimating density for several times
 x_pdf = np.linspace(-2.0, 4.0, 1000)
-for day in np.arange(0, nd_show, 20):
-    kernel = stats.gaussian_kde(X[:, 0, int(day / (time_unit * dt))])
+has_legend = False
+for day in np.arange(0, nd_show, 30):
+    kernel = stats.gaussian_kde(X[:, jM, int(day / (time_unit * dt))])
     pdf    = kernel(x_pdf).T
-    ax.plot3D(np.full(len(pdf), day), x_pdf, pdf, "orange", lw = 1)
+    if not has_legend:
+        label = "Ensemble PDF"
+        has_legend = True
+    else:
+        label = None
+        
+    ax.plot3D(np.full(len(pdf), day), x_pdf, pdf, "orange", lw = 1, \
+              label = label)
 
+# Fit climatology
+kernel_clim = stats.gaussian_kde(X[jtruth, jM, :])
+pdf_clim = kernel_clim(x_pdf).T
+ax.plot3D(np.full(len(pdf_clim), 0), x_pdf, pdf_clim, \
+          color = [1.0, 0.5, 0.5], lw = 2, label = "Climatology PDF")
+plt.legend()
 plt.grid()
-plt.xlim(0, t[-1] * time_unit)
+plt.xlim(0, t[jd_show] * time_unit)
 plt.xlabel("Days")
 plt.ylabel("Observable")
 plt.ylim(-2.0, 4.0)   
 ax.set_zlim(0.1, 4.0)
 ax.set_zlabel("PDF")
-
 plt.tight_layout(pad = 5.0)
 plt.savefig("./fig001.png")
 
