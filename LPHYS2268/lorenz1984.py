@@ -8,6 +8,13 @@ Created on Wed Jan 29 10:10:05 2020
             Atmosphere.” Tellus A 36A, no. 2 (1984): 98–110. 
             https://doi.org/10.1111/j.1600-0870.1984.tb00230.x.
 
+@documentation:
+    We make the distinction between two periods: the past and th future.
+    The past is covered by one realization, the truth, and sampled by a limited
+    number of observations
+    The future is covered by many realizations, the ensemble, initialized
+    from the present observation plus some noise.
+    The dynamics obey the Lorenz 1984 system.
 """
 
 # Imports
@@ -28,35 +35,46 @@ np.random.seed(0)
 # State vector dimension
 M = 3
 # Index of observable
-jM = np.random.randint(M)
+jM = 2
 
+# Model parameters
 a = 0.25
 b = 4.0
 F = 8.0
 G = 1.0
 
+# Time step for the numerical model expressed in days
+dt = 1 / 6
+
 # Run parameters
-t0 = 0.0 # Initial time
-# One time unit is 5 days
-time_unit = 5.0
-# Time step expressed in time units
-dt = 1 / 30
-# Integration time (in days), then conversion from days to time steps
-nd = 500
-# Nb days to show
-nd_show = 90 
-N = int(nd / (time_unit * dt))
-# The  time axis
-t = np.array([t0 + n * dt for n in range(N)])
+# When to start the truth, i.e. how many days before the initial time
+day_past = -50
+
+# Day of initialization
+day_init  = 0.0 
+
+# Day of verification
+day_verif = 15.0
 
 # Number of Monte-Carlo integrations
-nMC = 1000
-std = 1e-1 # standard deviation of Gaussian in perturbation
-# Index of truth
-jtruth = np.random.randint(nMC) 
+nMC     = 100
+std_ini = 0.05 # standard deviation of Gaussian perturbation of initial state
+std_obs =  0.1 # standard deviation of Gaussian perturbation for observations
 
-# The initial condition
-X0 = np.full(M, 1) 
+# ==========================
+# End of standard parameters
+# ==========================
+nday = day_verif - day_past
+nt   = int(nday / dt )
+
+# Creation of a time dimension
+day = np.array([day_past + jt * dt for jt in range(nt + 1)])
+# Time sequence
+t   = np.arange(nt + 1)
+t_init  = int((day_init  - day_past) / dt)
+t_verif = int((day_verif - day_past) / dt)
+# Index of truth, conveniently chosen as the first of the ensemble
+jtruth = 0
 
 # The system to be solved
 #
@@ -76,89 +94,96 @@ def f(t, M, X):
     
     return value
 
-X = np.full((nMC, M, N), np.nan)
 
+# Initializing the state with "0"
+# The first dimension is augmented by 1 to make space for the truth
+X = np.full((1 + nMC, M, nt + 1), np.nan)
+# Initializing the truth
+X[jtruth, :, 0] = np.full(M, 0)
 
+# Start integration
+for jt in np.arange(1, nt + 1):
+    # If we are before the initial time, let's just propagate the truth
+    if day[jt] < day_init:
+        X[jtruth, :, jt] = rk4vec(day[jt - 1], M, X[jtruth, :, jt - 1], dt, f)
 
-# Start Monte-Carlo integrations
-for jMC in np.arange(nMC):
-    print(jMC)
-    # Start the run
-    # -------------
-    X[jMC, :, 0] = X0 + std * np.random.randn(M)
+       
+    # Start Monte-Carlo integrations at initial time, sampled from truth
+    elif day[jt] == day_init:
+        
+        # Update truth
+        X[jtruth, :, jt] = rk4vec(day[jt - 1], M, X[jtruth, :, \
+                 jt - 1], dt, f)
     
-    for jN in np.arange(1, N):
-        # Runge-Kutta 4th order method
-        X[jMC, :, jN] = rk4vec(t[jN - 1], M, X[jMC, :, jN - 1], dt, f)
+        # Generate initial condition from it
+        Xini = X[jtruth, :, jt] 
+
+        # Initialize all members                
+        for jMC in np.arange(1, nMC + 1): # Ranging from 1 since 0 is the truth
+            X[jMC, :, jt] = Xini + std_ini * np.random.randn(M)
+            
+    # If we are past the initial time, propagate from previous state
+    else:
+        for jMC in np.arange(nMC + 1):
+            # Runge-Kutta 4th order method
+            X[jMC, :, jt] = rk4vec(day[jt - 1], M, X[jMC, :, jt - 1], dt, f)
 
 
 # Plot
 # ----
-fig, ax = plt.subplots(figsize = (6, 5), dpi = 300, \
+fig, ax = plt.subplots(figsize = (8, 3), dpi = 300, \
                        constrained_layout = True)
-ax = plt.axes(projection = '3d')
-ax.view_init(50, -45)
-jd_show = int(nd_show / (time_unit * dt))
-
-has_legend = False
-for jMC in range(nMC):
-    if not has_legend:
-        label = "Realization"
-        has_legend = True
-    else:
-        label = None
-      
-    ax.plot3D(t[:jd_show] * time_unit, X[jMC, jM, :jd_show], \
-           np.zeros(len(t[:jd_show])), lw = 0.01, \
-    color = "grey", label = label)
-
-# Plot truth
-ax.plot3D(t[:jd_show] * time_unit, X[jtruth, jM, :jd_show], \
-          np.zeros(len(t[:jd_show])), lw = 1, \
-          color = [0.0, 0.5, 0.0], label = "Truth")
-
-ax.plot3D((0.0, nd_show), (0.0, 0.0), (0.0, 0.0), "k--")
-# Estimating density for several times
-x_pdf = np.linspace(-2.0, 4.0, 1000)
-has_legend = False
-for day in np.arange(0, nd_show, 30):
-    kernel = stats.gaussian_kde(X[:, jM, int(day / (time_unit * dt))])
-    pdf    = kernel(x_pdf).T
-    if not has_legend:
-        label = "Ensemble PDF"
-        has_legend = True
-    else:
-        label = None
-        
-    ax.plot3D(np.full(len(pdf), day), x_pdf, pdf, "orange", lw = 1, \
-              label = label)
-
-# Fit climatology
-kernel_clim = stats.gaussian_kde(X[jtruth, jM, :])
-pdf_clim = kernel_clim(x_pdf).T
-ax.plot3D(np.full(len(pdf_clim), 0), x_pdf, pdf_clim, \
-          color = [1.0, 0.5, 0.5], lw = 2, label = "Climatology PDF")
-plt.legend()
-plt.grid()
-plt.xlim(0, t[jd_show] * time_unit)
 plt.xlabel("Days")
-plt.ylabel("Observable")
-plt.ylim(-2.0, 4.0)   
-ax.set_zlim(0.1, 4.0)
-ax.set_zlabel("PDF")
-plt.tight_layout(pad = 5.0)
-plt.savefig("./fig001.png")
+plt.ylabel("State")
+plt.xlim(day_past, 20)
+plt.ylim(-3.0, 3.0)
+plt.grid()
 
-## 3D
-#fig, ax = plt.subplots(figsize = (6, 5), dpi = 100, constrained_layout=True)
-#ax = plt.axes(projection='3d')
-#ax.view_init(50, -45)
-#[ax.plot3D(X[jMC, 0, :200], X[jMC, 1, :200], X[jMC, 2, :200], "k.", ms = 0.5, \
-#           color = [0.5, 0.5, 0.5]) for jMC in range(nMC)]
-#ax.plot3D(X[jtruth, 0, :], X[jtruth, 1, :], X[jtruth, 2, :], ls = "-", lw = 1, \
-#           color = [0.0, 0.5, 0.0])
-#plt.tight_layout(pad = 5.0)
-#plt.savefig("./fig002.png")
+# Plot truth until initialization
+plt.plot(day[:t_init + 1], X[jtruth, jM, :t_init + 1], \
+          lw = 1, \
+          color = [0.5, 0.5, 0.5], label = "True state")
+plt.legend()
+plt.savefig("./fig002a.png")
+
+# Add hypothetical observations sampled from the state plus small noise
+obs_freq = 5 # Sampling frequency of observations (expressed in days)
+t_obs = t[int((day_init - day_past) / dt):: - int(obs_freq / dt)]
+day_obs = day[t_obs]
+obs = X[jtruth, jM, t_obs] + std_obs * np.random.randn(len(t_obs))
+plt.scatter(day_obs, obs, 50, marker = "*", color = [0.0, 0.5, 0.0], label = "Observations")
+plt.legend()
+plt.savefig("./fig002b.png")
+
+# Mark initial time
+plt.plot((day_init, day_init), (-1e9, 1e9), "r--")
+# Mark verification time
+plt.plot((day_verif, day_verif), (-1e9, 1e9), "--", 
+         color = [0.0, 176 / 255, 240 / 255])
+plt.savefig("./fig002c.png")
+
+# Fit climatological PDF at verification time
+x_pdf = np.linspace(-4.0, 4.0, 1000)
+kernel_clim = stats.gaussian_kde(X[jtruth, jM, :t_init])
+## Scale factor to make the PDF visual
+scalef = 10
+pdf_clim = kernel_clim(x_pdf).T * scalef
+plt.plot(day_verif + pdf_clim, x_pdf, color = [0.5, 0.5, 0.5])
+plt.savefig("./fig002d.png")
+
+
+# Display forecast plume
+[plt.plot(day, X[jMC, jM, :], color = [0.0, 176 / 255, 240 / 255], lw = 0.05)\
+ for jMC in np.arange(1, nMC)]
+
+# Fit forecast distribution conditioned on observations
+kernel_forecast = stats.gaussian_kde(X[1:, jM, t_verif])
+pdf_fore = kernel_forecast(x_pdf).T * scalef
+plt.plot(day_verif + pdf_fore, x_pdf, color = [0.0, 176 / 255, 240 / 255])
+plt.savefig("./fig002e.png")
+plt.legend()
+
+
 
 
 
