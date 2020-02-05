@@ -48,13 +48,13 @@ dt = 1 / 6
 
 # Run parameters
 # When to start the truth, i.e. how many days before the initial time
-day_past = -50
+day_past = -30
 
 # Day of initialization
 day_init  = 0.0 
 
 # Day of verification
-day_verif = 3.0
+day_verif = 30#80
 
 # Number of Monte-Carlo integrations
 nMC     = 100
@@ -88,11 +88,11 @@ jtruth = 0
 # Right-hand side of ODE as a function
 # X is a column np array of size M
 def f(t, M, X):
-        
+    # d is the day of year
     value = np.full(M, np.nan)
     
-    value[0] = - X[1] ** 2 - X[2] ** 2 - a * X[0] + a * F
-    value[1] = X[0] * X[1] - b * X[0] * X[2] - X[1] + G
+    value[0] = - X[1] ** 2 - X[2] ** 2 - a * X[0] + a *  F
+    value[1] = X[0] * X[1] - b * X[0] * X[2] - X[1] + G * (1 - 2.0 * np.cos(2.0 * np.pi / (1.0 * 365.0) * t))
     value[2] = b * X[0] * X[1] + X[0] * X[2] - X[2]
     
     return value
@@ -138,7 +138,7 @@ fig, ax = plt.subplots(figsize = (8, 3), dpi = 300, \
                        constrained_layout = True)
 plt.xlabel("Days")
 plt.ylabel(stl[jM])
-plt.xlim(day_past, 20)
+plt.xlim(day_past, 100)
 plt.ylim(-3.0, 3.0)
 plt.grid()
 
@@ -147,7 +147,6 @@ plt.plot(day[:t_init + 1], X[jtruth, jM, :t_init + 1], \
           lw = 1, \
           color = [0.5, 0.5, 0.5], label = "True state")
 plt.legend()
-plt.savefig("./fig002a.png")
 
 # Add hypothetical observations sampled from the state plus small noise
 obs_freq = 5 # Sampling frequency of observations (expressed in days)
@@ -156,35 +155,41 @@ day_obs = day[t_obs]
 obs = X[jtruth, jM, t_obs] + std_obs * np.random.randn(len(t_obs))
 plt.scatter(day_obs, obs, 50, marker = "*", color = [0.0, 0.5, 0.0], label = "Observations")
 plt.legend()
-plt.savefig("./fig002b.png")
 
 # Mark initial time
 plt.plot((day_init, day_init), (-1e9, 1e9), "r--")
 # Mark verification time
 plt.plot((day_verif, day_verif), (-1e9, 1e9), "--", 
          color = [0.0, 176 / 255, 240 / 255])
-plt.savefig("./fig002c.png")
 
 # Fit climatological PDF at verification time
 x_pdf = np.linspace(-4.0, 4.0, 1000)
 kernel_clim = stats.gaussian_kde(X[jtruth, jM, :t_init])
 ## Scale factor to make the PDF visual
-scalef = 10
+scalef = 40
 pdf_clim = kernel_clim(x_pdf).T * scalef
 plt.plot(day_verif + pdf_clim, x_pdf, color = [0.5, 0.5, 0.5])
-plt.savefig("./fig002d.png")
 
 
 # Display forecast plume
-[plt.plot(day, X[jMC, jM, :], color = [0.0, 176 / 255, 240 / 255], lw = 0.05)\
- for jMC in np.arange(1, nMC)]
+for jMC in np.arange(1, nMC):
+    if jMC == 1:
+        label = "Forecasts"
+    else:
+        label = None
+    p = plt.plot(day, X[jMC, jM, :], color = [0.0, 176 / 255, 240 / 255], lw = 0.05, label = label)
 
+ax.legend().get_lines()[-1].set_linewidth(1.0)
+    
 # Fit forecast distribution conditioned on observations
 kernel_forecast = stats.gaussian_kde(X[1:, jM, t_verif])
 pdf_fore = kernel_forecast(x_pdf).T * scalef
 plt.plot(day_verif + pdf_fore, x_pdf, color = [0.0, 176 / 255, 240 / 255])
-plt.savefig("./fig002e.png")
-plt.legend()
+
+
+
+plt.savefig("./fig004.png")
+
 
 
 
