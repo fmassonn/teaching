@@ -54,12 +54,15 @@ day_past = -50
 day_init  = 0.0 
 
 # Day of verification
-day_verif = 15.0
+day_verif = 3.0
 
 # Number of Monte-Carlo integrations
 nMC     = 100
 std_ini = 0.05 # standard deviation of Gaussian perturbation of initial state
 std_obs =  0.1 # standard deviation of Gaussian perturbation for observations
+
+# State label names
+stl = ["$x_t$", "$y_t$", "$z_t$"]
 
 # ==========================
 # End of standard parameters
@@ -134,7 +137,7 @@ for jt in np.arange(1, nt + 1):
 fig, ax = plt.subplots(figsize = (8, 3), dpi = 300, \
                        constrained_layout = True)
 plt.xlabel("Days")
-plt.ylabel("State")
+plt.ylabel(stl[jM])
 plt.xlim(day_past, 20)
 plt.ylim(-3.0, 3.0)
 plt.grid()
