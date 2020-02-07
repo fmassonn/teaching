@@ -117,5 +117,3 @@ ax.plot3D(t, y0 * np.exp(t / tau), "w--", lw = 1)
 ax.plot3D(t, y1 * np.exp(t / tau), "w--", lw = 1)
 
 plt.savefig("./fig005e.png")
-
-
