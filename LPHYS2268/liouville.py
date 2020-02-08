@@ -19,9 +19,11 @@ from numerical_methods import *
 
 np.random.seed(0)
 
-# The assumed solution is X(t) = X(0) * exp(t/tau)
-tau = 6.0
+# The ordinary differential equation is dX/dt = X^2 
+# for which the solution is X(t) = X0 / (1 - t * X0)
 
+def solution(X0, t):
+    return X0 / (1 - t * X0)
 
 # X at time t
 # Number of ensembles
@@ -32,25 +34,28 @@ fig, ax = plt.subplots(figsize = (6, 3), dpi = 300, \
 ax = plt.axes(projection = '3d')
 ax.view_init(40, 10)
 
-tf = 5 # days
-dt = 1 / 24 # time step
+tf = 0.3 # days
+dt = 0.001 # time step
 t = np.arange(0.0, tf, dt)
 nt = len(t)
-X0 = 2.0 + 0.5 * np.random.randn(M)
+
+# Initial state
+X0 = 1.3 + 0.4 * np.random.randn(M)
 
 X = np.full((M, nt), np.nan)
 
 # Plot one solution
-
-ax.plot3D(t, X0[0] * np.exp(t / tau) , np.zeros(nt), color = [0.0, 176 / 255, 240 / 255],
+ax.plot3D(t, solution(X0[0], t) , np.zeros(nt), color = [0.0, 176 / 255, 240 / 255],
               linewidth = 2, label = "One solution")
 ax.set_xlabel("days")
+ax.set_xticks([0.0, 0.1, 0.2, 0.3])
 ax.set_ylabel("x")
 ax.set_zlim(0.0, 1.0)
 ax.set_ylim(-0.0, 7)
 plt.legend()
 plt.tight_layout()
 plt.savefig("./fig005a.png")
+
 
 # Plot PDF of initial state
 x_pdf = np.linspace(0, 7, 1000)
@@ -66,7 +71,7 @@ for jM in np.arange(M):
         label = "All solutions compatible\nwith initial state"
     else:
         label = None
-    X[jM, :] = X0[jM] * np.exp(t / tau)
+    X[jM, :] = solution(X0[jM], t)
     
     ax.plot3D(t, X[jM, :], np.zeros(nt), color = [0.0, 176 / 255, 240 / 255],
               linewidth = 0.1, label = label)
@@ -87,7 +92,7 @@ plt.savefig("./fig005d.png")
 
 
 # Plot conserved area under curve
-y0, y1 = 2.0, 2.2
+y0, y1 = 1.5, 1.7
 x0, x1 = 0.0, 0.0
 z0, z1 = kernel0(y0).T, kernel0(y1).T
 
@@ -101,7 +106,7 @@ ax.add_collection3d(pc)
 
 
 # Plot end area under curve
-ydt0, ydt1 = y0 * np.exp(t[-1]/tau), y1 * np.exp(t[-1]/tau) 
+ydt0, ydt1 = solution(y0, t[-1]), solution(y1, t[-1])
 xdt0 = t[-1]
 x = [xdt0, xdt0, xdt0, xdt0]
 y = [ydt0, ydt1, ydt1, ydt0]
@@ -113,7 +118,25 @@ pc = Poly3DCollection(verts, alpha = 0.7, facecolor = [1.0, 0.5, 0.5] )
 ax.add_collection3d(pc)
 
 # Plot boundary trajectories
-ax.plot3D(t, y0 * np.exp(t / tau), "w--", lw = 1)
-ax.plot3D(t, y1 * np.exp(t / tau), "w--", lw = 1)
+ax.plot3D(t, solution(y0, t), "w--", lw = 1)
+ax.plot3D(t, solution(y1, t), "w--", lw = 1)
 
 plt.savefig("./fig005e.png")
+
+
+# Plot mean of initial ensemble
+ax.scatter(0, np.mean(X0), 0, color = "green", marker = "x", label = "Mean")
+plt.legend()
+ax.legend().get_lines()[-2].set_linewidth(1.0)
+plt.savefig("./fig005f.png")
+
+# Plot trajectory issued from the mean
+ax.plot3D(t, solution(np.mean(X0), t), "g:", lw = 2)
+plt.savefig("./fig005g.png")
+
+# Actual mean
+ax.scatter(t[-1], np.mean(X[:, -1]), 0, color = [1, 0.5, 0.5], marker = "x", label = "True mean")
+ax.legend().get_lines()[-2].set_linewidth(1.0)
+plt.savefig("./fig005h.png")
+
+
