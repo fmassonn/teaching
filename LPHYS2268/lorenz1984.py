@@ -48,7 +48,7 @@ dt = 1 / 6
 
 # Run parameters
 # When to start the truth, i.e. how many days before the initial time
-day_past = -30
+day_past = -20
 
 # Day of initialization
 day_init  = 0.0 
@@ -57,7 +57,7 @@ day_init  = 0.0
 day_verif = 30#80
 
 # Number of Monte-Carlo integrations
-nMC     = 100
+nMC     = 2
 std_ini = 0.05 # standard deviation of Gaussian perturbation of initial state
 std_obs =  0.1 # standard deviation of Gaussian perturbation for observations
 
@@ -138,57 +138,42 @@ fig, ax = plt.subplots(figsize = (8, 3), dpi = 300, \
                        constrained_layout = True)
 plt.xlabel("Days")
 plt.ylabel(stl[jM])
-plt.xlim(day_past, 100)
+plt.xlim(day_past, 30)
 plt.ylim(-3.0, 3.0)
 plt.grid()
 
-# Plot truth until initialization
-plt.plot(day[:t_init + 1], X[jtruth, jM, :t_init + 1], \
+# Plot truth 
+plt.plot(day, X[jtruth, jM, :], \
+          lw = 3, \
+          color = [0.5, 0.5, 0.5], label = "Solution de référence")
+plt.legend()
+plt.savefig("./fig0.png")
+
+# Plot solution initialized from truth
+plt.plot(day[t_init:], X[jtruth, jM, t_init:], \
           lw = 1, \
-          color = [0.5, 0.5, 0.5], label = "True state")
+          color = [0.0, 1.0, 0.0], label = "Conditions initiales exactes")
 plt.legend()
-
-# Add hypothetical observations sampled from the state plus small noise
-obs_freq = 5 # Sampling frequency of observations (expressed in days)
-t_obs = t[int((day_init - day_past) / dt):: - int(obs_freq / dt)]
-day_obs = day[t_obs]
-obs = X[jtruth, jM, t_obs] + std_obs * np.random.randn(len(t_obs))
-plt.scatter(day_obs, obs, 50, marker = "*", color = [0.0, 0.5, 0.0], label = "Observations")
+plt.savefig("./fig1.png")
+# Plot solution initialized closed to truth
+plt.plot(day[t_init:], X[1, jM, t_init:], \
+          lw = 1, \
+          color = [1.0, 0.0, 0.0], label = "Conditions initiales légèrement différentes")
 plt.legend()
-
-# Mark initial time
-plt.plot((day_init, day_init), (-1e9, 1e9), "r--")
-# Mark verification time
-plt.plot((day_verif, day_verif), (-1e9, 1e9), "--", 
-         color = [0.0, 176 / 255, 240 / 255])
-
-# Fit climatological PDF at verification time
-x_pdf = np.linspace(-4.0, 4.0, 1000)
-kernel_clim = stats.gaussian_kde(X[jtruth, jM, :t_init])
-## Scale factor to make the PDF visual
-scalef = 40
-pdf_clim = kernel_clim(x_pdf).T * scalef
-plt.plot(day_verif + pdf_clim, x_pdf, color = [0.5, 0.5, 0.5])
-
-
-# Display forecast plume
-for jMC in np.arange(1, nMC):
-    if jMC == 1:
-        label = "Forecasts"
-    else:
-        label = None
-    p = plt.plot(day, X[jMC, jM, :], color = [0.0, 176 / 255, 240 / 255], lw = 0.05, label = label)
-
-ax.legend().get_lines()[-1].set_linewidth(1.0)
-    
-# Fit forecast distribution conditioned on observations
-kernel_forecast = stats.gaussian_kde(X[1:, jM, t_verif])
-pdf_fore = kernel_forecast(x_pdf).T * scalef
-plt.plot(day_verif + pdf_fore, x_pdf, color = [0.0, 176 / 255, 240 / 255])
+plt.savefig("./fig2.png")
 
 
 
-plt.savefig("./fig004.png")
+
+
+
+
+
+
+
+
+
+
 
 
 
