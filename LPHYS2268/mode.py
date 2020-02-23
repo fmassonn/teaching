@@ -17,7 +17,7 @@ from ts_analyses import *
 
 
 # Data
-# (re-download)
+# (re-download  at ftp://ftp.cdc.noaa.gov/Datasets/COBE2/sst.mon.mean.nc)
 file = "./data/cobe_sst_1850-2015.nc"
 
 yearb = 1966
