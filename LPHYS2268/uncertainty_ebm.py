@@ -66,7 +66,9 @@ perc = [100 - c for c in CIs[-1::-1]] + CIs
 dQ = dQ_ref  * (t - t[0] ) / (t[-1] - t[0])
 fig0, ax0 = plt.subplots(1, 2, figsize = (8, 3), dpi = 300)
 
-dT = 1 / C * np.exp(lambda_ref * t / C) * np.cumsum(dQ * np.exp(- lambda_ref /C * t) * dt)
+#dT = 1 / C * np.exp(lambda_ref * t / C) * np.cumsum(dQ * np.exp(- lambda_ref /C * t) * dt)
+# No-heat capacity solution
+dT = -1 / lambda_ref * dQ
 
 ax0[0].plot(t, dQ, "green")
 ax0[0].set_ylabel("Wm$^{-2}$")
@@ -94,9 +96,10 @@ nlambdas = 1000
 lambdas = -1.0 + 0.2 * np.random.randn(nlambdas)
 
 # Solution
-dT = np.array([1 / C * np.exp(lam * t / C) * np.cumsum(dQ * np.exp(- lam /C * t) * dt) 
-     for lam in lambdas])
-
+#dT = np.array([1 / C * np.exp(lam * t / C) * np.cumsum(dQ * np.exp(- lam /C * t) * dt) 
+#     for lam in lambdas])
+# No-heat capacity solution
+dT = np.array([-1 / lam * dQ for lam in lambdas])
 
 
 dTperc = [np.percentile(dT, p, axis = 0) for p in perc]
@@ -227,8 +230,7 @@ for j, p in enumerate(perc[:int(len(perc)/2)]):
     
     ll = np.linspace(np.mean(internalvperc[j]), np.mean(internalvperc[len(perc) - 1 -j]))
     uu = kernel(ll).T
-    ax[2, 0].fill_between(ll, np.zeros(len(ll)), uu, color = color, 
-      label = str(int(100 - 2*p)) + " %")
+    ax[2, 0].fill_between(ll, np.zeros(len(ll)), uu, color = color, label = str(int(100 - 2*p)) + " %")
 
     
 ax[2, 1].plot(t, np.mean(dT, axis = 0), "w-", lw = 2)
@@ -241,9 +243,8 @@ ax[2, 1].grid()
 
 ax[2, 0].set_xlim(-1.0, 1.0)
 ax[2, 0].set_title("Internal variability")
-ax[2, 0].set_xlabel(r"Temperature [" + "$^\circ$C]")
+ax[2, 0].set_xlabel(r"Temperature " + "$^\circ$ C")
 ax[2, 0].set_ylabel("Density [$^\circ$ C$^{-1}$]")
-ax[2, 0].legend()
 
 plt.tight_layout()
 
@@ -271,7 +272,6 @@ plt.plot(t, FU3 ,"blue", label = "internal variability")
 plt.plot(t, FU1 + FU2 + FU3, "k", label = "total")
 plt.xlim(yinit - 10, yeare)
 plt.ylim(0.0, 250)
-plt.ylabel("%")
 plt.grid()
 plt.legend()
 plt.savefig("./fig007.png")
