@@ -14,6 +14,9 @@ import os
 
 from scipy.stats import norm
 
+# Illustration of four types of forecasts
+def normal(xx, mu = 0, sigma = 1):
+    return 1.0 / np.sqrt(2 * np.pi * sigma ** 2) * np.exp(- ((xx - mu) / (np.sqrt(2) * sigma)) ** 2)
 
 # Month labels
 months = [calendar.month_name[i + 1] for i in range(12)]
@@ -63,21 +66,83 @@ plt.savefig("./fig000.png")
 
 # Threshold to define event
 thresh = 18.0
-ax.plot((-1e9, 1e9), (thresh, thresh), "k--", label = "Threshold")
+tt = ax.plot((-1e9, 1e9), (thresh, thresh), "k--", label = "Threshold")
 ax.legend()
 plt.savefig("./fig001.png")
 
-ax.fill_between((-1e9, 1e9, 1e9, -1e9), (thresh, thresh, 1e9, 1e9), 
-                color = "green", alpha = 0.2, label = "Event")
-ax.fill_between((-1e9, 1e9, 1e9, -1e9), (-1e9, -1e9, thresh, thresh), 
-                color = "red", alpha = 0.2, label = "Non-event")
+aa = ax.fill_between((-1e9, 1e9, 1e9, -1e9), (thresh, thresh, 1e9, 1e9), 
+                color = "green", alpha = 0.2, label = "Event", zorder = -1)
+bb = ax.fill_between((-1e9, 1e9, 1e9, -1e9), (-1e9, -1e9, thresh, thresh), 
+                color = "red", alpha = 0.2, label = "Non-event", zorder = -1)
 ax.legend()
 plt.savefig("./fig002.png")
 
-ax.scatter(years, forec, marker = "^", color = [0.8, 0.0, 0.0], label = "Forecast")
+ax.fill_between((-1e9, 1e9, 1e9, -1e9), (-1e9, -1e9, 1e9, 1e9), 
+                color = "white", alpha = 1.0, zorder = 0)
+aa.remove()
+bb.remove()
+
+aa = ax.scatter(years, forec, marker = "^", color = [0.8, 0.0, 0.0], label = "Forecast")
+ax.set_xlim(2000.5, 2010.5)
+ax.set_ylim(17, 20)
 ax.legend()
 plt.savefig("./fig003.png")
 
+
+TT = np.linspace(10.0, 25.0, 10000)
+plotleg = True
+for year in years:
+    pdf = normal(TT, mu = forec[year - years[0]], \
+                          sigma = stdev[year - years[0]])
+    if plotleg:
+        leg = " Forecast PDF"
+        plotleg = False
+    else:
+        leg = None
+    mx = normal(forec[year - years[0]], mu = forec[year - years[0]], sigma = stdev[year - years[0]] )
+   
+    pdf1 = normal(TT[TT>forec[year - years[0]]], mu = forec[year - years[0]], \
+                          sigma = stdev[year - years[0]])
+    pdf2 = normal(TT[TT<forec[year - years[0]]], mu = forec[year - years[0]], \
+                          sigma = stdev[year - years[0]])
+    
+    ax.fill_between(year + pdf1, np.full(len(pdf1), forec[year - years[0]]), 
+                    TT[TT>forec[year - years[0]]],
+                    color = [1.0, 0.0, 0.0], alpha = 0.2, lw = 0)
+    ax.fill_between(year + pdf2, TT[TT<forec[year - years[0]]], 
+                    np.full(len(pdf2), forec[year - years[0]]), 
+                    color = [1.0, 0.0, 0.0], alpha = 0.2, lw = 0, label = leg)
+aa.remove()
+tt[0].remove()
+ax.legend()
+plt.savefig("./fig004.png")
+
+
+# Re-add line
+tt = ax.plot((-1e9, 1e9), (thresh, thresh), "k--", label = "Threshold")
+
+ax.legend()
+plt.savefig("./fig005.png")
+
+
+# Scatter plot
+fig, ax = plt.subplots(1, 1, figsize = (3, 3), dpi = 300)
+ax.set_xlim(15.0, 20.0)
+ax.set_ylim(15.0, 20.0)
+ax.set_xlabel("Forecasted August SST [°C]")
+ax.set_ylabel("Observed August SST [°C]")
+ax.grid()
+ax.plot((-1e9, 1e9), (-1e9, 1e9), "k--", label = "1:1 line")
+ax.scatter(forec, verif, 20, marker = "s", color = [0.2, 0.2, 0.2], label = "Data")
+correl = np.corrcoef(forec, verif)[0, 1]
+MSE = np.mean((forec - verif) ** 2)
+B = np.mean(forec - verif)
+
+
+
+ax.legend()
+plt.tight_layout()
+plt.savefig("./fig100.png")
 
 
 # Contingency table
@@ -96,6 +161,16 @@ d = sum((forec < thresh)  * (verif < thresh))
 # -------------------------
 PC = (a + d) / n
 print("Proportion correct -->" + str(PC))
+
+TS = a / (a + b + c)
+print("Threat score -->" + str(TS))
+
+OR = a * d / (b * c)
+print("Odds ratio -->" + str(OR))
+
+BIAS = (a + b) / (a + c)
+print("Bias -->" + str(BIAS))
+
 
 # Print it
 fig, ax = plt.subplots(1, 1, figsize = (2, 2), dpi = 300)
@@ -130,16 +205,18 @@ plt.savefig("contingency.png")
 
 prob = 1 - norm.cdf(((thresh - forec) / stdev))
 
-fig, ax = plt.subplots(1, 1, figsize = (6, 3), dpi = 100)
+fig, ax = plt.subplots(1, 1, figsize = (6, 3), dpi = 300)
 # Cosmetics
 ax.grid()
 ax.set_axisbelow(True)
 ax.set_xlim(1979.5, 2010.5)
 ax.set_ylim(0.0, 100.0)
 ax.set_ylabel("%")
-ax.set_title("Probability of forecast SST exceeding " + str(thresh) + " °C")
+ax.set_title("Probability of forecasted SST exceeding " + str(thresh) + " °C")
 ax.bar(years, 100 * prob)
-
+ax.set_xlim(2000.5, 2010.5)
+ax.set_xticks(np.arange(2001, 2011))
+plt.savefig("./fig006.png")
 
 # Reliability diagram
 fig, ax = plt.subplots(1, 1, figsize = (4, 4), dpi = 300)
@@ -170,7 +247,14 @@ for lb in np.arange(0, 1, step):
                         color = "k", alpha = 0.2, lw = 0)
     white = not white
     
-plt.savefig("./fig004.png")
+plt.savefig("./fig008.png")
+
+# Brier score
+verif_event = 1.0 * (verif > thresh)
+BS = np.mean((prob - verif_event) ** 2)
+
+p_clim = np.sum(verif_event) / len(years)
+BS_ref = np.mean((p_clim - verif_event) ** 2)
 
 def write_csv_SST():
     
