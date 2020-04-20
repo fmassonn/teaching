@@ -16,7 +16,8 @@ from scipy.stats import norm
 
 # Illustration of four types of forecasts
 def normal(xx, mu = 0, sigma = 1):
-    return 1.0 / np.sqrt(2 * np.pi * sigma ** 2) * np.exp(- ((xx - mu) / (np.sqrt(2) * sigma)) ** 2)
+    return 1.0 / np.sqrt(2 * np.pi * sigma ** 2) * np.exp(- ((xx - mu)  \
+                / (np.sqrt(2) * sigma)) ** 2)
 
 # Month labels
 months = [calendar.month_name[i + 1] for i in range(12)]
@@ -315,11 +316,11 @@ def write_csv_SST():
         y1 = year - clim_len
         
         # First and last indices defining the period
-        i1 = (y1 - yearb) * 12 + mon_pre
-        i2 = (y2 - yearb) * 12 + mon_pre
+        i1pre = (y1 - yearb) * 12 + mon_pre
+        i2pre = (y2 - yearb) * 12 + mon_pre
         print("  Using climatology " + str(y1) + "-" + str(y2))
         
-        pre_mean = np.mean(var[i1:i2 + 1:12])
+        pre_mean = np.mean(var[i1pre:i2pre + 1:12])
         print("  Predictor mean: " + str(pre_mean) + " °C")
         
         # 2. Compute this year's May anomaly
@@ -330,15 +331,25 @@ def write_csv_SST():
         
         # 3. Compute target mean
         # ----------------------
-        i1 = (y1 - yearb) * 12 + mon_tar
-        i2 = (y2 - yearb) * 12 + mon_tar
-        tar_mean = np.mean(var[i1:i2 + 1:12])
+        i1tar = (y1 - yearb) * 12 + mon_tar
+        i2tar = (y2 - yearb) * 12 + mon_tar
+        tar_mean = np.mean(var[i1tar:i2tar + 1:12])
         
         print("  Target mean: " + str(tar_mean) + " °C") 
         
-        # 4. Compute confidence interval around target mean
-        # -------------------------------------------------
-        std = np.std(var[i1:i2 + 1:12])
+        # 4. Compute uncertainty
+        # ----------------------
+        # Uncertainty comes from the fact that the means are subject to
+        # sampling variability. If n years are available to estimate the
+        # means, then the std on the mean is std / sqrt(n)
+        # We add up variances, assuming May and september are not correlated
+        
+        std = np.sqrt(
+              1 / len(var[i1pre:i2pre + 1:12]) * \
+              np.var(var[i1pre:i2pre + 1:12]) + 
+              1 / len(var[i1tar:i2tar + 1:12]) * \
+              np.var(var[i1tar:i2tar + 1:12])
+                     )
             
         forec[0][year - yearbf] = tar_mean + pre_ano
         forec[1][year - yearbf] = std

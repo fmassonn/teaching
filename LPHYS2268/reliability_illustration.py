@@ -55,7 +55,7 @@ if forecast_type == "clim":
     std_forecasts   = np.std(verif)  * np.ones(nt)
 elif forecast_type == "standard":
     bias    =   0.0   # Bias in the mean
-    disp_fact = 2.0 # Dispersion factor: > 1.0 to inflate the spread of forecasts
+    disp_fact = 1.0 # Dispersion factor: > 1.0 to inflate the spread of forecasts
                 # (Make them overdispersive or underconfident)
                 # 0 < disp_fact < 1.0 for underdispersive or overconfident
               
