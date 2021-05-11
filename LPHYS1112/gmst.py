@@ -131,7 +131,7 @@ dfa[dfa < 0.0] = np.nan
 years2 = df[0][1:-1]
 sie   = np.nanmean(dfa[1:-1, :], axis = 1)
 
-fig2, ax2 = plt.subplots(1, 1, figsize = (5, 3))
+fig2, ax2 = plt.subplots(1, 1, figsize = (5, 3), dpi = 300)
 for year, data in zip(years2, sie):
     color = plt.cm.RdYlBu(int((data - min(sie)) / (max(sie) - min(sie)) * 255.0))[:3]
     ax2.bar(year, data, width = 1, color = color )
