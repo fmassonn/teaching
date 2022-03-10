@@ -96,19 +96,21 @@ leg = "Forecast PDF"
 
 # Our four forecasters
 
-name = ["Alice", "Bob", "Charles", "Damien", "Edwin"]
+name = ["Alice", "Bob", "Charles", "Damien", "Edwin", "50%-50%"]
 nF   = len(name) # Nb. forecasters
 
 muF  = [ot + 0.5 * np.random.randn(nt), \
         mu * np.ones(nt), \
         ot + 0.5 * np.random.randn(nt), \
         ot + 2 * np.random.randn(nt), \
-        ot + 0.1 * np.random.randn(nt)]
+        ot + 0.1 * np.random.randn(nt),
+        thr2 * np.ones(nt)]
 stF  = [sig, \
         sig, \
         2 * sig, \
         0.5 * sig, \
-        0.1 * sig]
+        0.1 * sig, \
+        100 * sig]
 
 # Go through all forecasts
 # ------------------------
@@ -293,13 +295,14 @@ ax.set_ylim(0.0, 1.0)
 ax.set_xlabel("SST ($^\circ$ C)")
 fig.tight_layout()
 fig.savefig("./crps01.png", dpi = 300)
+a.pop(0).remove()
 
 xtmp = xpdf[xpdf > ot[jt]]
 pdftmp = pdf[xpdf > ot[jt]]
-ax.fill_between(xtmp, pdftmp)
+aaa = ax.fill_between(xtmp, pdftmp)
 fig.savefig("./talagrand01.png", dpi = 300)
+aaa.remove()
 
-a.pop(0).remove()
 ax.plot(xpdf, cdf, color = "b", linestyle = "--")
 fig.savefig("./crps02.png", dpi = 300)
 
