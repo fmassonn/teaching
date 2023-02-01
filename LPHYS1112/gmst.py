@@ -6,7 +6,7 @@ Created on Mon May 13 11:02:43 2019
 """
 
 import pandas as pd
-import urllib
+import urllib.request
 import matplotlib.pyplot as plt
 import numpy as np
 # Gaussian filter
@@ -82,7 +82,7 @@ def gsmooth(t_in, x_in, tau, t_out = None, method = None, check = False):
     return t_out[start:end], x_out[start:end]
 
 # Fetch the data
-url = 'https://www.ncdc.noaa.gov/cag/global/time-series/globe/land_ocean/ytd/12/1880-2020.csv'  
+url = 'https://www.ncdc.noaa.gov/cag/global/time-series/globe/land_ocean/ytd/12/1880-2021.csv'  
 filename = url.split("/")[-1]
 urllib.request.urlretrieve(url, filename) 
 
@@ -100,7 +100,7 @@ for year, data in zip(years, gmst):
     
 ax1.grid()
 ax1.plot((-1e9, 1e9), (0.0, 0.0), lw = 2, color = "k")
-ax1.set_xlim(1870, 2022)
+ax1.set_xlim(1870, 2024)
 ax1.set_ylabel("$^\circ$ C")
 ax1.set_title("Anomalies des températures moyennes\nglobales en surface (réf: 1901-2000)")
 fig1.tight_layout()
@@ -114,7 +114,7 @@ ax1.plot(years_out, gmst_smooth, linewidth = 3, color = [0.5, 0.5, 0.5])
 fig1.savefig("./gmst2.png")
 
 fig1.set_size_inches(4, 3)
-ax1.set_xlim(1990, 2020)
+ax1.set_xlim(1990, 2024)
 
 fig1.tight_layout()
 fig1.savefig("./gmst3.png")

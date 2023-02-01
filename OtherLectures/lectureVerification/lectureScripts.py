@@ -10,9 +10,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 import scipy.stats
-from scipy import stats
 matplotlib.rcParams['font.family'] = "Arial Narrow"
 
+exec(open("./boreHoles.py").read())
+stop()
 
 np.random.seed(2)
 # Number of time steps
