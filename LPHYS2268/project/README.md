@@ -4,15 +4,15 @@
 
 ### Week 1: Producing a control simulation
 
-1. Creating an account on the ELIC servers.
+#### 1. Creating an account on the ELIC servers.
 
 Each student will create an account on the ELIC servers. A few students might already have such an account, so this step is not necessary for them.
 
 Connect to the "Calcul Intensif et Stockage de Masse" (CISM) [login creation page](https://www.cism.ucl.ac.be/doc/_contents/About/cilog.html). **The login can only be created from within the university network** (or via a VPN). Then, follow the instructions. Regarding the affiliation, choose ELI/ELIC. Regarding the projects, tick "Interactive computing".
 
-Once you receive your login, notify Pierre-Yves Barriat and he will create a login on the ELIC servers with the same login.
+Once you receive your login, let [Pierre-Yves Barriat](mailto:pierre-yves.barriat@uclouvain.be) and he will create an access to the ELIC servers with the same login as the CISM one.
 
-2. Connecting to your account on the `coriolis` server
+#### 2. Connecting to your account on the `coriolis` server
 
 You have different options:
 - connecting from a PC of the informatics room on the third floor with your credentials
@@ -21,9 +21,11 @@ You have different options:
 	- Do `ssh -X <user>@www.climate.be`
 	- You should arrive on a "gateway", from where you can do `ssh -X <user>@coriolis.elic.ucl.ac.be`
 
-3. Copying the PlaSim code in your local repository
+#### 3. Copying the PlaSim code in your local repository
 
-The `mkdir` allows creating a new folder and the `cd` command allows navigating through the architecture of the machine. Create a repository for this course:
+The `mkdir` allows creating a new folder and the `cd` command allows navigating through the architecture of the machine. Go to your "home" directory and create a repository for this course:
+
+`cd /home/elic/<user>`
 
 `mkdir LPHYS2268`
 
@@ -32,15 +34,15 @@ and then enter it:
 `cd LPHYS2268`
 
 
-You then need to copy the PLASIM code locally. The  `cp` command can do the job:
+Next, you need to copy the PLASIM code locally. The `cp` command can do the job:
 
 `cp /home/elic/fmasson/PlaSim-LPHYS2268.tar.gz ./`
 	
-then to unwrap the archive:
+then unwrap the archive:
 
 `tar xzf PlaSim-LPHYS2268.tar.gz` (takes about a minute)
 
-4. Configure the setup and compile the model code
+#### 4. Configure the setup and compile the model code
 
 Look at what is inside the directory by doing `ls`. Then go to the `PlaSim` main directory, check that the file `configure.sh` is there and configure the architecture of the model to match the `coriolis` server with
 
@@ -60,7 +62,7 @@ This command opens a graphical user interface (GUI) where you can decide a coupl
 
 Then, click the green button "Save and Exit". **Do not close the GUI**. You can track the compilation (~30 seconds) in the terminal. Once the compilation is over, an executable file named `plasim/bin/most_plasim_t21_l10_p1.x` should have been created. If that is not the case, the compilation step did not work properly.
 
-5. Execute the simulation
+#### 5. Execute the simulation
 
 **NOTE**: anytime a simulation is performed, the suite of tools CDO (Climate Data Operators) has to be loaded. This can be done each time by doing `module load CDO`. Alternatively, you can add `module load CDO` in the file `/home/elic/<user>/.bashrc` that is loaded at every login.
 
@@ -68,7 +70,7 @@ Go to `plasim/run` and execute:
 
 ``./most_plasim_run``
 
-If that does not produce an error within 10 seconds, then the model is effectively working. Because we do not want to wait in front on the screen, we can launch this task in the background. To do so, kill the current run by doing CTRL+C. Then, do:
+If that does not produce an error within 10 seconds, then the model is running :-). Because we do not want to wait in front on the screen, we can launch this task in the background. To do so, kill the current run by doing CTRL+C. Then, do:
 
 `nohup ./most_plasim_run >& log &`
 
@@ -86,7 +88,7 @@ Completed month 04-0001
 Note that a new `plasim_diag` file is created for each new year of simulation.
 The model runs at about 20 seconds per simulated month; so the 10-yr run should take around 40 minutes.
 
-6. Visualizing the results
+#### 6. Visualizing the results
 
 A convenient format to visualize the ouput is NetCDF (\*.nc files). After the simulation, several ocean and sea ice files should already be available as NetCDF: `MOST_OCE.<year>.nc`and `MOST_ICE.<year>.nc`. Verify their presence.
 
@@ -95,6 +97,8 @@ The atmospheric outputs are contained in the binary files `MOST.\<year\>`. To co
 ```
 ./srv2nc -p MOST.001 MOST.001.nc
 ```
+
+Note that this command also requires CDO (do a `module load CDO` if needed).
 
 This command converts the atmospheric file of year 1 to its NetCDF equivalent. The `-p` option is important to compute the sea level pressure from the state variables.
 
@@ -117,6 +121,9 @@ ncdump -h MOST.001.nc
 
 Note that years contain 360 days in the model (30 days per month).
 
-7. Plotting time series
+#### 7. Plotting the results
 
-For this first week, you are asked to plot the time series of annual mean global mean temperature for the 10 years of the simulation that you obtained.
+For this first week, you are asked to plot the time series of annual mean global mean temperature at 2 m for the 10 years of the simulation that you produced. The grid of PLASIM on which the atmospheric data is saved is a regular latitude-longitude grid of dimensions 64 by 32, i.e., 5.625° by 5.625°. The area of each grid cell is given by the formula 
+
+$$A = (a \  \cos\phi \  d\lambda) (a \  d\phi)$$
+with $a$ the Earth radius, $\phi$ the latitude (in radians) and $d\lambda$ and $d\phi$ the grid resolution in radians.
