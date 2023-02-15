@@ -102,7 +102,7 @@ Note that this command also requires CDO (do a `module load CDO` if needed).
 
 This command converts the atmospheric file of year 1 to its NetCDF equivalent. The `-p` option is important to compute the sea level pressure from the state variables.
 
-Load the NCO module that allows using visualization tools by doing `module load NCO` (this command can also be included in your `bashrc` file as for the CDO command). Then, open the resulting file:
+Load the ncview module that allow using visualization tools by doing `module load ncview` (this command can also be included in your `bashrc` file as for the CDO command). Then, open the resulting file:
 
 ```
 ncview MOST.001.nc
