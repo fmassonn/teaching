@@ -2,7 +2,7 @@
 ## Understanding climate prediction concepts with PlaSim
 
 
-### Week 1: Producing a control simulation
+### Weeks 1-2: Producing a control simulation
 
 #### 1. Creating an account on the ELIC servers.
 
@@ -102,7 +102,7 @@ Note that this command also requires CDO (do a `module load CDO` if needed).
 
 This command converts the atmospheric file of year 1 to its NetCDF equivalent. The `-p` option is important to compute the sea level pressure from the state variables.
 
-Then, open the resulting file:
+Load the NCO module that allows using visualization tools by doing `module load NCO` (this command can also be included in your `bashrc` file as for the CDO command). Then, open the resulting file:
 
 ```
 ncview MOST.001.nc
@@ -127,3 +127,26 @@ For this first week, you are asked to plot the time series of annual mean global
 
 $$A = (a \  \cos\phi \  d\lambda) (a \  d\phi)$$
 with $a$ the Earth radius, $\phi$ the latitude (in radians) and $d\lambda$ and $d\phi$ the grid resolution in radians.
+
+
+### Week 3: Predictability
+
+For this second week, you are going to estimate the initial-value predictability (or predictability of the first kind) of the PLASIM model.
+
+As we have seen in the lecture, predictability can be defined as the extent by which two probability density functions differ from one another: the forecast PDF conditioned on observations available at initial time, and the unconditional forecast PDF equivalent to the climatological PDF. Thus, we need to datasets to estimate the PDFs from.
+
+#### 1. The climatological pdf
+
+The work of Week 1 has not really allowed to produce long enough integrations of the PLASIM model. Fortunately, a long control simulation has been conducted for you. You can find it at: 
+
+`/cofast/fmasson/LPHYS2268/Week2/`
+
+under the files `CTRL.???.nc` where ??? refer to the year of the run.
+
+Plot the time series of the global mean annual mean 2m air temperature for each year of the simulation. 
+
+Also, plot the histogram of the temperature.
+
+
+#### 2. The forecast PDF
+
