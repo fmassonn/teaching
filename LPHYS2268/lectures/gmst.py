@@ -5,13 +5,14 @@ Created on Mon May 13 11:02:43 2019
 @author: massonnetf
 """
 
+import pandas
 import pandas as pd
 import urllib
 import matplotlib.pyplot as plt
 import numpy as np
 
 # Fetch the data
-url = 'https://www.ncdc.noaa.gov/cag/global/time-series/globe/land_ocean/ytd/12/1880-2019.csv'  
+url = 'https://www.ncdc.noaa.gov/cag/global/time-series/globe/land_ocean/ytd/12/1880-2022.csv'  
 filename = url.split("/")[-1]
 urllib.request.urlretrieve(url, filename) 
 
@@ -29,7 +30,7 @@ for year, data in zip(years, gmst):
     
 plt.grid()
 plt.plot((-1e9, 1e9), (0.0, 0.0), lw = 2, color = "k")
-plt.xlim(1970, 2020)
+plt.xlim(1970, 2024)
 plt.ylabel("$^\circ$ C")
 plt.title("Global mean surface temperature\nanomaly (ref: 1901-2000)")
 plt.tight_layout()
