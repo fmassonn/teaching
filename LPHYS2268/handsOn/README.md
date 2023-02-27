@@ -157,7 +157,7 @@ A 100-member ensemble 10-yr simulation has been started from the restart of the 
 under the files `PPP_xxx.????.nc` where xxx refers to the ensemble member (001, 002, ... 100) and ???? refers to the year of the run.
 
 
-### 3. Predictability
+#### 3. Predictability
 
 Plot the global mean temperature for each ensemble member, for each day of the first year. Compare the variance of the ensemble with the climatological variance estimated, say, over 25000-2599. Derive an estimate of the initial-value predictability of PlaSim.
 
