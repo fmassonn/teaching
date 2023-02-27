@@ -159,6 +159,6 @@ under the files `PPP_xxx.????.nc` where xxx refers to the ensemble member (001, 
 
 #### 3. Predictability
 
-Plot the global mean temperature for each ensemble member, for each day of the first year. Compare the variance of the ensemble with the climatological variance estimated, say, over 25000-2599. Derive an estimate of the initial-value predictability of PlaSim.
+Plot the global mean temperature for each ensemble member, for each day of the first year. Compare the variance of the ensemble with the climatological variance estimated, say, over 2500-2599. Derive an estimate of the initial-value predictability of PlaSim.
 
 
