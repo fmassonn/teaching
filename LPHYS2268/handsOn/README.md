@@ -2,7 +2,7 @@
 ## Understanding climate prediction concepts with PlaSim
 
 
-### Weeks 1-2: Producing a control simulation
+### Weeks 1-3: Producing a control simulation
 
 #### 1. Creating an account on the ELIC servers.
 
@@ -129,24 +129,36 @@ $$A = (a \  \cos\phi \  d\lambda) (a \  d\phi)$$
 with $a$ the Earth radius, $\phi$ the latitude (in radians) and $d\lambda$ and $d\phi$ the grid resolution in radians.
 
 
-### Week 3: Predictability
+### Weeks 4-6: Predictability
 
-For this second week, you are going to estimate the initial-value predictability (or predictability of the first kind) of the PLASIM model.
+For this secon part, you are going to estimate the initial-value predictability (or predictability of the first kind) of the PLASIM model.
 
 As we have seen in the lecture, predictability can be defined as the extent by which two probability density functions differ from one another: the forecast PDF conditioned on observations available at initial time, and the unconditional forecast PDF equivalent to the climatological PDF. Thus, we need to datasets to estimate the PDFs from.
 
 #### 1. The climatological pdf
 
-The work of Week 1 has not really allowed to produce long enough integrations of the PLASIM model. Fortunately, a long control simulation has been conducted for you. You can find it at: 
+The work of Weeks 1-3 has not really allowed to produce long enough integrations of the PLASIM model. Fortunately, a long control simulation has been conducted for you. You can find it at: 
 
-`/cofast/fmasson/LPHYS2268/Week2/`
+`/cofast/fmasson/LPHYS2268/CTRL`
 
-under the files `CTRL.???.nc` where ??? refer to the year of the run.
+under the files `CTRL.?????.nc` where ????? refer to the year of the run.
 
-Plot the time series of the global mean annual mean 2m air temperature for each year of the simulation. 
+Plot the time series of the global mean annual mean 2m air temperature for the last 500 years of the simulation. 
 
 Also, plot the histogram of the temperature.
 
 
 #### 2. The forecast PDF
+
+A 100-member ensemble 10-yr simulation has been started from the restart of the CTRL run at the end of year 2999. The data is stored in 
+
+`/cofast/fmasson/LPHYS2268/PPP/`
+
+under the files `PPP_xxx.????.nc` where xxx refers to the ensemble member (001, 002, ... 100) and ???? refers to the year of the run.
+
+
+### 3. Predictability
+
+Plot the global mean temperature for each ensemble member, for each day of the first year. Compare the variance of the ensemble with the climatological variance estimated, say, over 25000-2599. Derive an estimate of the initial-value predictability of PlaSim.
+
 
