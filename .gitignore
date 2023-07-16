@@ -1,6 +1,7 @@
 # Folders
 data/2020-2021/netcdf
 
+__pycache__
 # Build and Release Folders
 bin/
 bin-debug/
