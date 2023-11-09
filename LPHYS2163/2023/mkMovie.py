@@ -43,12 +43,18 @@ def plot(file, variable = "z", level = 500):
             if variable == "z" and level == 500:
                 levels = np.arange(48000, 59000 + 100, 1000)
                 cmap = "tab20b"
+            elif variable == "z" and level == 1000:
+                levels = np.arange(-4000, 4000 + 100, 1000)
+                cmap = "tab20b"
             elif variable == "t" and level == 500:
                 levels = np.arange(230, 280, 2)
                 cmap = "RdYlBu_r"
+            elif variable == "t" and level == 1000:
+                levels = np.arange(250, 300, 2)
+                cmap = "RdYlBu_r"
+
             # Plot the geopotential data
             contour = ax.contourf(lon, lat, var, levels = levels, transform=ccrs.PlateCarree(), cmap=cmap, extend='both')
-            
             # Add color bar
             plt.colorbar(contour, label=f'{ds[variable].long_name} ({ds[variable].units})', orientation='horizontal', fraction=0.05, pad=0.15)
             
@@ -58,12 +64,14 @@ def plot(file, variable = "z", level = 500):
             plt.tight_layout()        
             # Save figure
             yyyymmddhhmm = time_stamp.strftime("%Y-%m-%d-%H%M")
-            plt.savefig('figs/' + variable  + str(level) + "_" + yyyymmddhhmm + '.png')
+            figName = 'figs/' + variable  + str(level) + "_" + yyyymmddhhmm + '.png'
+            plt.savefig(figName)
+            print(figName + " printed")
     
             plt.close()
 
 ## Example usage
-#for tag in ["202211", "202212", "202301", "202302", "202303", "202304", "202305", "202306", "202307", "202308", "202309"]:
-#    file = "/cofast/fmasson/TMP/download_" + tag + ".nc"
-#    plot(file, variable = "t", level = 500)  # Replace 0 with the desired time index
-#
+for tag in ["202210", "202211", "202212", "202301", "202302", "202303", "202304", "202305", "202306", "202307", "202308", "202309"]:
+    file = "/cofast/fmasson/TMP/download_" + tag + ".nc"
+    plot(file, variable = "z", level = 1000)  # Replace 0 with the desired time index
+
