@@ -109,8 +109,8 @@ A(x_{i}, y_{i - 1})}{2\Delta y}$$
 
 where $(x_{i}, y_{i})$ are the coordinates of the grid point where the
 gradient has to be calculated, $x_{i-1}$ ($x_{i + 1}$) is the
-$x-$ coordinate of the grid point located left (right) of the reference
-grid point, and $y_{i-1}$ ($y_{i + 1}$) is the $y-$ coordinate of the
+$x$ coordinate of the grid point located left (right) of the reference
+grid point, and $y_{i-1}$ ($y_{i+1}$) is the $y$ coordinate of the
 grid point located below (above) of the reference grid point, and
 $\Delta x$ and $\Delta y$ are the (uniform) grid spacings along the $x$
 and $y$ directions, respectively.
