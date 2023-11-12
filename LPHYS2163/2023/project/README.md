@@ -9,9 +9,10 @@ Here is a 5-minute video that shows the evolution, hour by hour for the
 period October 1st 2022 to September 30th 2023, of four variables:
 
 
-- The geopotential at the 500 hPa (or millibars) level, in m$^2$/s$^2$ -
-The air temperature at the 500 hPa level, in K - The geopotential at the
-1000 hPa level - The air temperature at the 1000 hPa
+* The geopotential at the 500 hPa (or millibars) level, in m2/s2
+* The air temperature at the 500 hPa level, in K
+* The geopotential at the 1000 hPa level
+* The air temperature at the 1000 hPa
 
 
 [![Watch the
