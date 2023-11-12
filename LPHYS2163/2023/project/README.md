@@ -84,7 +84,7 @@ in a spherical coordinate system
 pressure coordinates reads:
 
 
-$$\mathbf{u}_{g} = \frac{1}{f}\mathbf{k}\times\nabla_{p} \Phi$$
+$$\vec{u}_{g} = \frac{1}{f}\vec{k}\times\nabla_{p} \Phi$$
 
 $$**u**_{g} = \frac{A(x_{i+1}, y_{i}) -
 A(x_{i-1}, y_{i})}{2\Delta x}$$
@@ -140,20 +140,28 @@ geostrophic wind with the real wind that is available from the variables
 $u$ and $v$ in the file. Comment on the agreement (or disagreement)
 between the two winds. Specifically, is the geostrophic wind a better approximation
 aloft (500 hPa) or at the surface (1000 hPa)? Is it a better
-approximation over the sea or over the continents? Is it a better
+approximation over sea or over the continents? Is it a better
 approximation in regions of strong horizontal gradients of geopotential,
 or in regions of weak horizontal gradients? Is it a better approximation
 at high, or low latitudes?
 
-## Step 5. Divergence of the wind
-You can now create a function that calculates the divergence of a field in spherical 
-coordinates. Apply this function to the real wind field ($u,v$) on the file
+## Step 5. Case study: the Omega blocking
+You are finally asked to look at the second file
  `./data/sample_20230905_1200.nc` that contains the same variables as before but for 
  the 5th of September 2023 at 12.00. This period was marked by a strong blocking
  event, which produced a high-pressure system over Belgium. Simultaneously, two very low
- pressure systems developed on the flank of the anticyclone. The low pressure system on the
+ pressure systems developed on the flanks of the anticyclone. The low pressure system on the
  eastern side gave rise to storm Daniel that struck Libya with unprecedented floods there.
+ 
+ Plot the geopotential at 500 hPa on that day. Why is this synoptic situation called an "Omega blocking"?
+ 
+ Can you spot storm Daniel? What is the relative vorticity field on that day?
  
  
 ## Project guidelines
-Each group will submit a report no longer than 10 pages.
+Each group will submit a report no longer than 10 pages (including figures) following the guidelines described above. The deadline for submission of the report is the 15th of December 2023.
+Reports must be sent by email at (francois.massonnet@uclouvain.be)[francois.massonnet@uclouvain.be]. 
+
+
+
+The groups will present their findings (10 min presentation + 10 min of questions and answers) on Tuesday 19 December at 10.45.
