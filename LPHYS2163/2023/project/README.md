@@ -158,7 +158,7 @@ You are finally asked to look at the second file
  
 ## Project guidelines
 Each group will submit a report no longer than 10 pages (including figures) following the guidelines described above. The deadline for submission of the report is the 15th of December 2023.
-Reports must be sent by email at (francois.massonnet@uclouvain.be)[francois.massonnet@uclouvain.be]. 
+Reports must be sent by email to [francois.massonnet@uclouvain.be](francois.massonnet@uclouvain.be)
 
 
 
