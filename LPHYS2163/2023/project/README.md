@@ -84,7 +84,7 @@ in a spherical coordinate system
 pressure coordinates reads:
 
 
-$\vec{u} = \frac{1}{f}\vec{k}\times\nabla_{p} \Phi$
+$\mathbf{u} = \frac{1}{f}\mathbf{k}\times\nabla_{p} \Phi$
 
 
 with $f=2\Omega \sin\phi$ the Coriolis parameter ($\Omega$ is the angular velocity of the Earth), $\vec{k}$ a unit vector pointing
