@@ -86,7 +86,7 @@ pressure coordinates reads:
 
 $$\mathbf{u}_{g} = \frac{1}{f}\mathbf{k}\times\nabla_{p} \Phi$$
 
-$$\frac{\partial A}{\partial x} \approx \frac{A(x_{i+1}, y_{i}) -
+$$\mathbf{u}_{g} = \frac{A(x_{i+1}, y_{i}) -
 A(x_{i-1}, y_{i})}{2\Delta x}$$
 
 with $f=2\Omega \sin\phi$ the Coriolis parameter ($\Omega$ is the angular velocity of the Earth), $\mathbf{k}$ a unit vector pointing
