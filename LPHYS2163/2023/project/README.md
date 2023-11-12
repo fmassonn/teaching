@@ -84,10 +84,8 @@ in a spherical coordinate system
 pressure coordinates reads:
 
 
-$$\vec{u}_{g} = \frac{1}{f}\vec{k}\times\nabla_{p} \Phi$$
+$\vec{u}_{g} = \frac{1}{f}\vec{k}\times\nabla_{p} \Phi$
 
-$$**u**_{g} = \frac{A(x_{i+1}, y_{i}) -
-A(x_{i-1}, y_{i})}{2\Delta x}$$
 
 with $f=2\Omega \sin\phi$ the Coriolis parameter ($\Omega$ is the angular velocity of the Earth), $\mathbf{k}$ a unit vector pointing
 upwards, $\Phi$ the geopotential and $\nabla_{p} \Phi$ its gradient taken on surfaces of equal pressure, i.e., on isobaric surfaces.
