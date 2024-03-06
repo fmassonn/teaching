@@ -139,26 +139,28 @@ As we have seen in the lecture, predictability can be defined as the extent by w
 
 The work of Weeks 1-3 has not really allowed to produce long enough integrations of the PLASIM model. Fortunately, a long control simulation has been conducted for you. You can find it at: 
 
-`/cofast/fmasson/LPHYS2268/CTRL`
+`/cofast/fmasson/LPHYS2268_DATA/CTRL/`
 
-under the files `CTRL.?????.nc` where ????? refer to the year of the run.
-
-Plot the time series of the global mean annual mean 2m air temperature for the last 500 years of the simulation. 
-
-Also, plot the histogram of the temperature.
-
+under the files `CTRL.?????.nc` and  `CTRL_OCE.????.nc` where ????? refer to the year of the run.
 
 #### 2. The forecast PDF
 
-A 100-member ensemble 10-yr simulation has been started from the restart of the CTRL run at the end of year 2999. The data is stored in 
+A 100-member ensemble 10-yr simulation has been started from the restart of the CTRL run at the end of year 999 with minuscule perturbations to the CO2 forcing (standard deviation of 0.001 ppm) added to the baseline of 360 ppm. The data is stored in 
 
-`/cofast/fmasson/LPHYS2268/PPP/`
+`/cofast/fmasson/LPHYS2268_DATA/PPP/`
 
-under the files `PPP_xxx.????.nc` where xxx refers to the ensemble member (001, 002, ... 100) and ???? refers to the year of the run.
+under the files `PPP_xxxx.????.nc` and `PPP_OCE_xxxx.????.nc`   where xxxx refers to the ensemble member (0001, 0002, ... 0100) and ???? refers to the year of the run.
 
 
 #### 3. Predictability
+Plot the global mean temperature for each ensemble member from January 1st to March 31st in the PPP ensemble. 
 
-Plot the global mean temperature for each ensemble member, for each day of the first year. Compare the variance of the ensemble with the climatological variance estimated, say, over 2500-2599. Derive an estimate of the initial-value predictability of PlaSim.
+Compute the standard deviation of the ensemble as a function of time. 
+
+Compare the standard deviation with the climatological standard deviation for each day, derived from the CTRL run.
+
+Repeat the analysis with slower variables, e.g. the global mean sea surface temperature (oceanic files are also provided). Be careful that sea surface temperature has large values on land; therefore, use the land-sea mask provided in the file.
+
+Comment on the predictability of these two variables.
 
 
