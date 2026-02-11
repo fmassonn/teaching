@@ -11,6 +11,7 @@ bin-release/
 
 # Other files and folders
 .settings/
+*/.DS_Store
 .DS_Store
 # Executables
 *.swf
@@ -26,6 +27,7 @@ bin-release/
 
 # Other files
 *.nc
+*.mp4
 *.orig
 *.png
 *.eps
