@@ -36,3 +36,5 @@ bin-release/
 
 # Logs
 log*
+
+LPHY1365/data/aws_10min.csv
