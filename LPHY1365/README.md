@@ -13,3 +13,5 @@ x=3
 $$
 
 et ne pas laisser de ligne blanche dans les tableaux/accolades etc.
+
+dans le inline text, ne pas laisser d'espace (pas "$x = Y + 4 $ mais $x = Y + 4$)
